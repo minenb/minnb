@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可爱时间查看器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffcce6, #c6e2ff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        h1 {
+            color: #ff6b9d;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        h1::after {
+            content: "⏰";
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 1.8rem;
+            animation: spin 8s linear infinite;
+        }
+        
+        .time-display {
+            background: linear-gradient(45deg, #ffb6c1, #ff9a8b);
+            border-radius: 20px;
+            padding: 30px 20px;
+            margin: 30px 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            color: white;
+            font-size: 3.5rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .time-display::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, transparent, #ffffff, transparent);
+            animation: shine 3s infinite;
+        }
+        
+        .date-display {
+            font-size: 1.5rem;
+            color: #6a5acd;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .cute-elements {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+        }
+        
+        .cute-element {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            animation: float 6s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .cute-element:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .cute-element:nth-child(1) {
+            background: #ffd8e4;
+            animation-delay: 0s;
+        }
+        
+        .cute-element:nth-child(2) {
+            background: #d8f8ff;
+            animation-delay: 1s;
+        }
+        
+        .cute-element:nth-child(3) {
+            background: #fff0d8;
+            animation-delay: 2s;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* Animations */
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Floating elements */
+        .floating {
+            position: absolute;
+            z-index: 1;
+        }
+        
+        .cloud {
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .cloud:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            width: 80px;
+            height: 30px;
+            animation: drift 25s linear infinite;
+        }
+        
+        .cloud:nth-child(2) {
+            top: 25%;
+            right: 10%;
+            width: 120px;
+            height: 40px;
+            animation: drift 30s linear infinite reverse;
+        }
+        
+        .cloud:nth-child(3) {
+            bottom: 20%;
+            left: 15%;
+            width: 60px;
+            height: 25px;
+            animation: drift 20s linear infinite;
+        }
+        
+        .star {
+            color: #ffd700;
+            font-size: 1.5rem;
+            animation: twinkle 3s infinite;
+        }
+        
+        .star:nth-child(4) {
+            top: 15%;
+            right: 20%;
+            animation-delay: 0.5s;
+        }
+        
+        .star:nth-child(5) {
+            bottom: 30%;
+            left: 25%;
+            animation-delay: 1s;
+        }
+        
+        .star:nth-child(6) {
+            top: 40%;
+            right: 30%;
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes drift {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .time-display {
+                font-size: 2.5rem;
+                padding: 20px 15px;
+            }
+            
+            .date-display {
+                font-size: 1.2rem;
+            }
+            
+            .cute-element {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background elements -->
+    <div class="floating cloud"></div>
+    <div class="floating cloud"></div>
+    <div class="floating cloud"></div>
+    <div class="floating star"><i class="fas fa-star"></i></div>
+    <div class="floating star"><i class="fas fa-star"></i></div>
+    <div class="floating star"><i class="fas fa-star"></i></div>
+    
+    <div class="container">
+        <h1>可爱时间查看器 <i class="fas fa-heart"></i></h1>
+        <div class="date-display" id="dateDisplay">2023年6月28日 星期三</div>
+        <div class="time-display" id="timeDisplay">00:00:00</div>
+        
+        <div class="cute-elements">
+            <div class="cute-element" title="点击有惊喜！"><i class="fas fa-cat"></i></div>
+            <div class="cute-element" title="点击有惊喜！"><i class="fas fa-dog"></i></div>
+            <div class="cute-element" title="点击有惊喜！"><i class="fas fa-birthday-cake"></i></div>
+        </div>
+        
+        <p class="footer">每时每刻都要可可爱爱哦！ <i class="fas fa-smile-wink"></i></p>
+    </div>
+
+    <script>
+        // 更新时间函数
+        function updateTime() {
+            const now = new Date();
+            
+            // 更新时间显示
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('timeDisplay').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // 更新日期显示
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdays[now.getDay()];
+            document.getElementById('dateDisplay').textContent = `${year}年${month}月${day}日 ${weekday}`;
+        }
+        
+        // 初始调用并每秒更新
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 添加可爱元素的交互效果
+        const cuteElements = document.querySelectorAll('.cute-element');
+        cuteElements.forEach(element => {
+            element.addEventListener('click', () => {
+                const icons = ['fa-heart', 'fa-star', 'fa-cloud', 'fa-moon', 'fa-sun', 'fa-rainbow'];
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                
+                // 创建漂浮效果
+                const floatingIcon = document.createElement('i');
+                floatingIcon.className = `fas ${randomIcon}`;
+                floatingIcon.style.position = 'absolute';
+                floatingIcon.style.color = getRandomColor();
+                floatingIcon.style.fontSize = '2rem';
+                floatingIcon.style.left = `${Math.random() * 100}%`;
+                floatingIcon.style.top = `${Math.random() * 100}%`;
+                floatingIcon.style.opacity = '0';
+                floatingIcon.style.transition = 'all 1.5s ease-out';
+                
+                document.body.appendChild(floatingIcon);
+                
+                // 触发动画
+                setTimeout(() => {
+                    floatingIcon.style.opacity = '1';
+                    floatingIcon.style.transform = `translateY(-${Math.random() * 100 + 50}px) rotate(${Math.random() * 360}deg)`;
+                }, 10);
+                
+                // 移除元素
+                setTimeout(() => {
+                    floatingIcon.remove();
+                }, 1600);
+            });
+        });
+        
+        // 生成随机颜色
+        function getRandomColor() {
+            const colors = ['#ff6b9d', '#6b5ce7', '#00cec9', '#fd79a8', '#fdcb6e', '#00b894'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    </script>
+</body>
+</html>
